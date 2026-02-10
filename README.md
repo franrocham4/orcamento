@@ -61,6 +61,10 @@ dashboard_pagamentos/
     └── script.js         # Lógica frontend
 ```
 
+## Demostração
+![Uploading Login - Prefeitura de Guarulhos - Google Chrome 2026-02-10 09-25-57.gif…]()
+
+
 ## Solução de Problemas
 
 ### Erro: "TemplateNotFound: index.html"
