@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Prefeitura de Guarulhos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #004a99; /* Azul Guarulhos */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            border-top: 8px solid #fcd116; /* Amarelo Guarulhos */
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header img {
+            width: 140px;
+            margin-bottom: 20px;
+        }
+
+        .login-header h1 {
+            color: #004a99;
+            font-size: 24px;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        .login-header p {
+            color: #666;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #004a99;
+            box-shadow: 0 0 0 3px rgba(0, 74, 153, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: #004a99;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-login:hover {
+            background: #003366;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 74, 153, 0.3);
+        }
+
+        .error-message {
+            color: #ce1126;
+            font-size: 13px;
+            margin-top: 15px;
+            padding: 12px;
+            background: #fff0f0;
+            border-left: 4px solid #ce1126;
+            display: none;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 25px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .register-link a {
+            color: #004a99;
+            text-decoration: none;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #004a99;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .register-form { display: none; }
+        .register-form.active { display: block; }
+        .login-form.hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Bras%C3%A3o_de_Guarulhos.png/120px-Bras%C3%A3o_de_Guarulhos.png" alt="Brasão Guarulhos">
+            <h1>Sistema de Controle</h1>
+            <p>Prefeitura de Guarulhos</p>
+        </div>
+
+        <!-- Formulário de Login -->
+        <form id="login-form" class="login-form">
+            <div class="form-group">
+                <label for="login-username">Usuário</label>
+                <input type="text" id="login-username" required placeholder="Digite seu usuário">
+            </div>
+            <div class="form-group">
+                <label for="login-password">Senha</label>
+                <input type="password" id="login-password" required placeholder="Digite sua senha">
+            </div>
+            <button type="submit" class="btn-login">Acessar Sistema</button>
+            <div class="spinner" id="login-loading"></div>
+            <div class="error-message" id="login-error"></div>
+            <div class="register-link">
+                Acesso restrito. <a onclick="toggleForm()">Solicitar acesso</a>
+            </div>
+        </form>
+
+        <!-- Formulário de Registro -->
+        <form id="register-form" class="register-form">
+            <div class="form-group">
+                <label for="register-username">Novo Usuário</label>
+                <input type="text" id="register-username" required>
+            </div>
+            <div class="form-group">
+                <label for="register-password">Senha</label>
+                <input type="password" id="register-password" required>
+            </div>
+            <div class="form-group">
+                <label for="register-fullname">Nome Completo</label>
+                <input type="text" id="register-fullname">
+            </div>
+            <button type="submit" class="btn-login">Cadastrar</button>
+            <div class="spinner" id="register-loading"></div>
+            <div class="error-message" id="register-error"></div>
+            <div class="register-link">
+                Já possui conta? <a onclick="toggleForm()">Voltar ao login</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function toggleForm() {
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            loginForm.classList.toggle('hidden');
+            registerForm.classList.toggle('active');
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            const errorDiv = document.getElementById('login-error');
+            const loadingDiv = document.getElementById('login-loading');
+            
+            errorDiv.style.display = 'none';
+            loadingDiv.style.display = 'block';
+            
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    window.location.href = '/';
+                } else {
+                    errorDiv.textContent = data.error || 'Falha na autenticação';
+                    errorDiv.style.display = 'block';
+                }
+            } catch (error) {
+                errorDiv.textContent = 'Erro de conexão com o servidor';
+                errorDiv.style.display = 'block';
+            } finally {
+                loadingDiv.style.display = 'none';
+            }
+        });
+
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('register-username').value;
+            const password = document.getElementById('register-password').value;
+            const fullName = document.getElementById('register-fullname').value;
+            const errorDiv = document.getElementById('register-error');
+            const loadingDiv = document.getElementById('register-loading');
+            
+            errorDiv.style.display = 'none';
+            loadingDiv.style.display = 'block';
+            
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, fullName })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    window.location.href = '/';
+                } else {
+                    errorDiv.textContent = data.error || 'Erro ao criar conta';
+                    errorDiv.style.display = 'block';
+                }
+            } catch (error) {
+                errorDiv.textContent = 'Erro de conexão';
+                errorDiv.style.display = 'block';
+            } finally {
+                loadingDiv.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
