@@ -62,7 +62,8 @@ dashboard_pagamentos/
 ```
 
 ## Demostração
-![Uploading Login - Prefeitura de Guarulhos - Google Chrome 2026-02-10 09-25-57.gif…]()
+![Login - Prefeitura de Guarulhos - Google Chrome 2026-02-10 09-25-57](https://github.com/user-attachments/assets/b79f8ef6-0d31-4333-9dc2-a412671425ae)
+
 
 
 ## Solução de Problemas
