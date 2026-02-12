@@ -84,3 +84,4 @@ Para dúvidas ou problemas, verifique:
 2. Se as dependências estão instaladas: `pip list`
 3. Se o arquivo Excel está no local correto
 "# Sistema-Orcamento" 
+"# Sistema" 
