@@ -1,9 +1,6 @@
 import logging
-import json
-import jwt
-from datetime import datetime, timedelta
-from functools import wraps
-from flask import Flask, render_template, jsonify, request, send_file, session
+from datetime import datetime
+from flask import Flask, render_template, jsonify, request, send_file
 from flask_socketio import SocketIO, emit
 from excel_processor import ExcelProcessor
 from file_monitor import FileMonitor
@@ -20,8 +17,6 @@ logger = logging.getLogger(__name__)
 
 # Criar aplicacao Flask
 app = Flask(__name__, template_folder=str(config.TEMPLATES_DIR), static_folder=str(config.STATIC_DIR))
-app.config['SECRET_KEY'] = 'seu-secret-key-super-seguro-2025'
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 
 # Inicializar SocketIO
 socketio = SocketIO(app, cors_allowed_origins="*")
@@ -39,31 +34,6 @@ current_data = {
     'last_update': None,
     'file_path': None
 }
-
-# Usuários logados
-logged_users = {}
-
-
-def token_required(f):
-    """Decorator para verificar token JWT"""
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = request.headers.get('Authorization')
-        if not token:
-            return jsonify({'error': 'Token ausente'}), 401
-        
-        try:
-            token = token.replace('Bearer ', '')
-            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
-            request.user_id = data['user_id']
-            request.username = data['username']
-            request.full_name = data['full_name']
-        except:
-            return jsonify({'error': 'Token inválido'}), 401
-        
-        return f(*args, **kwargs)
-    
-    return decorated
 
 
 def apply_adjustments_to_companies(companies):
@@ -104,82 +74,6 @@ def apply_adjustments_to_companies(companies):
     return companies
 
 
-@app.route('/login')
-def login_page():
-    """Pagina de login"""
-    return render_template('login.html')
-
-
-@app.route('/api/login', methods=['POST'])
-def login():
-    """Autentica um usuario"""
-    data = request.json
-    username = data.get('username')
-    password = data.get('password')
-    
-    if not username or not password:
-        return jsonify({'error': 'Usuario e senha sao obrigatorios'}), 400
-    
-    user = db.authenticate_user(username, password)
-    
-    if not user:
-        return jsonify({'error': 'Usuario ou senha invalidos'}), 401
-    
-    token = jwt.encode({
-        'user_id': user['id'],
-        'username': user['username'],
-        'full_name': user['full_name'],
-        'exp': datetime.utcnow() + timedelta(days=7)
-    }, app.config['SECRET_KEY'], algorithm='HS256')
-    
-    return jsonify({
-        'token': token,
-        'user': {
-            'id': user['id'],
-            'username': user['username'],
-            'full_name': user['full_name']
-        }
-    })
-
-
-@app.route('/api/register', methods=['POST'])
-def register():
-    """Cria um novo usuario"""
-    data = request.json
-    username = data.get('username')
-    password = data.get('password')
-    full_name = data.get('fullName', '')
-    
-    if not username or not password:
-        return jsonify({'error': 'Usuario e senha sao obrigatorios'}), 400
-    
-    if len(password) < 6:
-        return jsonify({'error': 'Senha deve ter pelo menos 6 caracteres'}), 400
-    
-    if db.user_exists(username):
-        return jsonify({'error': 'Usuario ja existe'}), 400
-    
-    if not db.create_user(username, password, full_name):
-        return jsonify({'error': 'Erro ao criar usuario'}), 500
-    
-    user = db.authenticate_user(username, password)
-    
-    token = jwt.encode({
-        'user_id': user['id'],
-        'username': user['username'],
-        'full_name': user['full_name'],
-        'exp': datetime.utcnow() + timedelta(days=7)
-    }, app.config['SECRET_KEY'], algorithm='HS256')
-    
-    return jsonify({
-        'token': token,
-        'user': {
-            'id': user['id'],
-            'username': user['username'],
-            'full_name': user['full_name']
-        }
-    }), 201
-
 
 @app.route('/')
 def index():
@@ -202,14 +96,13 @@ def get_expenses():
 
 
 @app.route('/api/expenses', methods=['POST'])
-@token_required
 def add_expense():
     """Adicionar novo lancamento"""
     data = request.json
     amount = float(data.get('amount', 0))
     company_code = data.get('company_code')
     company_name = data.get('company_name')
-    created_by = request.full_name or request.username
+    created_by = 'sistema'
     
     success = db.add_expense(
         company_code=company_code,
