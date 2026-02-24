@@ -8,29 +8,12 @@
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 </head>
 <body>
+    <!-- Hidden status elements required by script.js -->
+    <span id="status-dot" class="dot" style="display:none;"></span>
+    <span id="status-label" style="display:none;">Conectando...</span>
+    <p id="last-sync" style="display:none;">Última atualização: --:--</p>
+
     <div class="wrapper">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
-            <div class="sidebar-brand">
-                <div class="brand-icon">🏛️</div>
-                <div class="brand-text">
-                    <h2>Guarulhos</h2>
-                    <p>Controle de Pagamentos</p>
-                </div>
-            </div>
-            
-            <nav class="sidebar-nav">
-            </nav>
-
-            <div class="sidebar-footer">
-                <div class="status-indicator">
-                    <span id="status-dot" class="dot"></span>
-                    <span id="status-label">Conectando...</span>
-                </div>
-                <p id="last-sync" class="text-xs">Última atualização: --:--</p>
-            </div>
-        </aside>
-
         <!-- Main Content -->
         <main class="main-content">
             <!-- Header -->

@@ -1,1 +1,4 @@
 "downloads/*.xlsx" 
+__pycache__/
+*.pyc
+*.pyo
