@@ -1,40 +1,6 @@
 // Conectar ao servidor WebSocket
 const socket = io();
 
-// Verificar autenticacao ao carregar a pagina
-window.addEventListener('load', function() {
-    checkAuth();
-    // Mostrar nome do usuario
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    if (user.full_name) {
-        document.getElementById('user-name').textContent = 'Olá, ' + user.full_name;
-    } else if (user.username) {
-        document.getElementById('user-name').textContent = 'Olá, ' + user.username;
-    }
-});
-
-// Verificar autenticacao
-function checkAuth() {
-    const token = localStorage.getItem('token');
-    if (!token) {
-        window.location.href = '/login';
-        return false;
-    }
-    return true;
-}
-
-// Obter token
-function getToken() {
-    return localStorage.getItem('token');
-}
-
-// Fazer logout
-function logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    window.location.href = '/login';
-}
-
 // Estado da aplicacao
 let currentData = {
     companies: [],
@@ -297,8 +263,7 @@ function addExpense(event) {
     fetch('/api/expenses', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + getToken()
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
             company_code: selectedCompany.code,
